@@ -27,7 +27,7 @@ nodeTags = ["Apps", "Backup", "Web", "Data"]
 # AWS EC2.
 
 cloudProvider = [ "aws", "azure", "google", "phoenixnap",
-                  "softlayer", "digitalocean", "rackspace", "other"]
+                  "softlayer", "digitalocean", "other"]
 
 node_name = "#{Chef::Config[:node_name]}"
 
@@ -58,7 +58,7 @@ def get_tag(n_tags, default)
   end
 end
 
-default_tag = "#{node_name}" + "_t"
+default_tag = ""
 n_tag = get_tag(nodeTags, default_tag)
 provider = get_tag(cloudProvider, "other")
 Chef::Log.info "tag name = #{n_tag}"
@@ -71,10 +71,13 @@ script "install_node_client" do
   user "root"
   cwd "/tmp"
   code <<-EOH
-    #insert bash script
     wget --no-check-certificate https://#{controller}/install_node_client.sh
     chmod +x install_node_client.sh
-    ./install_node_client.sh -m force -s #{controller} -n #{node_name} -c #{provider} -t  #{n_tag} 
+    if [#{n_tag} = ""]; then
+        ./install_node_client.sh -m force -s #{controller} -n #{node_name} -c #{provider} 
+    else 
+        ./install_node_client.sh -m force -s #{controller} -n #{node_name} -c #{provider} -t  #{n_tag} 
+    fi
   EOH
 end
 

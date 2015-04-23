@@ -34,11 +34,13 @@ Systems from github repository.
 Step3: Recipe customization 
 ====================================================================
 3.1 Setting Node controller IP address (default.rb).
+
 Node controller is a centralized entity to configure and manage Nodes. 
 The IP address for the controller in default.rb ("52.10.254.180") 
 should be replaced by the controller IP address launched in AWS us-west-2. 
 
 3.2 Define Node Tag List (default.rb).
+
 Node tag defines a type of nodes.  
 A node can be associated with multiple tags. For Node Connect, tags are 
 used to define policies that build encrypted tunnel between nodes. You 
@@ -50,11 +52,14 @@ the Tag list using knife tag create command.
 
 nodeTags = ["Apps", "Backup", "Web", "Data"]
 
+Tag names must match with the tags in the Node Connect page Tags list for building encrypted tunnel. 
+
 3.3 Supported Node Provider Tags.
+
 Currently Node Connect supports the following cloud providers:
 
 cloudProvider = [ "aws", "azure", "google", "phoenixnap",
-                  "softlayer", "digitalocean", "rackspace", "other"]
+                  "softlayer", "digitalocean", "other"]
 
 You must not change the above cloudProvider list in default.rb.  
 You must provide for each node with one correct provider name through knife 
@@ -90,21 +95,11 @@ Following steps need to be taken to test the recipe on a node
 
 5.3 Add the recipe into the “run_list" with "knife node edit Node0"
 
-{
-  "name": "Node0",
-  "chef_environment": "_default",
-  "normal": {
-    "tags": [
-      "Web",
-      "aws",
-      "Data",
-      "Apps"
-    ]
-  },
   "run_list": [
+
   "recipe[nodeConnect]"      <<< added the recipe
+
 ]
-}
 
 5.4 Upload the cookbook into the server using "knife cookbook upload –a"
 
@@ -114,5 +109,9 @@ Client will be running Node Connect now!!. Check the controller’s
 “connect” page or chef logs for any error. 
 
 nodeConnect recipe can be integrated with other recipes in the organization.
+
+Limitations
+====================================================================
+Node Connect support two types of Node for network configuration: “Instance” and “Network”.  In this release Chef Recipe, only Instance type is supported.   
 
 =================================END===============================
